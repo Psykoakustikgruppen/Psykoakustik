@@ -1,12 +1,22 @@
-#Load packages
+#Installera paket
+install.packages("readr")
+install.packages("tidyverse")
+install.packages("MASS")
+install.packages("ggplot2")
+install.packages("ggpubr")
+
+#Load package (install with install.package("packagename") if missing)
 library(readr)
 library(tidyverse)
 library(MASS)
+library(ggplot2)
+library(ggpubr)
 
 #Read in data
 longdata <- read_delim("longdata.csv", delim = ";", 
                        escape_double = FALSE, trim_ws = TRUE)
 
+#Rename
 dat5L <- longdata[c("0.5kHz-upplevd-L", "0.5kHz-dB-L")]
 names(dat5L) <- c("loudness", "dB")
 dat5R <- longdata[c("0.5kHz-upplevd-R", "0.5kHz-dB-R")]
