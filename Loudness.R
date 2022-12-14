@@ -109,3 +109,15 @@ plot4 <- ggplot(longdata, aes(x = longdata$`4kHz-dB-L`, y = longdata$`4kHz-upple
 
 # 4 kHz: Lägg graferna för höger (plot3) och vänster (plot4) öra - 4kHz, bredvid varandra
 ggarrange(plot3, plot4, ncol=2, nrow=1)
+
+
+
+#(test) generera R-värden för glm-modeller
+install.packages("pscl")
+library(pscl)
+pR2(mod4R_glm)
+
+#få information om R-värdena i pR2:
+install.packages("sos")
+library(sos)
+help(package="pscl")
