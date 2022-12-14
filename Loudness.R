@@ -15,6 +15,15 @@ library(ggpubr)
 #Read in data
 longdata <- read_delim("longdata.csv", delim = ";", 
                        escape_double = FALSE, trim_ws = TRUE)
+#TEST; RADERA KANSKE
+dat5L <- longdata[c("0.5kHz-upplevd-L", "0.5kHz-dB-L")]
+names(dat5L) <- c("loudness", "dB")
+dat5R <- longdata[c("0.5kHz-upplevd-R", "0.5kHz-dB-R")]
+names(dat5R) <- c("loudness", "dB")
+dat4L <- longdata[c("4kHz-upplevd-L", "4kHz-dB-L")]
+names(dat4L) <- c("loudness", "dB")
+dat4R <- longdata[c("4kHz-upplevd-R", "4kHz-dB-R")]
+names(dat4R) <- c("loudness", "dB")
 
 #LINJÄRA MODELLER
 #Create linear model
@@ -109,3 +118,5 @@ plot4 <- ggplot(longdata, aes(x = longdata$`4kHz-dB-L`, y = longdata$`4kHz-upple
 
 # 4 kHz: Lägg graferna för höger (plot3) och vänster (plot4) öra - 4kHz, bredvid varandra
 ggarrange(plot3, plot4, ncol=2, nrow=1)
+
+print(ggarrange(plot1, plot2, plot3, plot4, ncol=2, nrow=2))
