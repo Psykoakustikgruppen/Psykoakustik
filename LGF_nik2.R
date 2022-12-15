@@ -30,7 +30,7 @@ lm_mod4R <- lm(loudness ~ dB, data = dat4R)
 #Create plots of data + linear models
 plot5L <- ggplot(dat5L, aes(x = dB, y = loudness)) + 
   geom_point(shape = 1, size = 3) +
-  stat_smooth(method = "lm", col = "red", alpha = 0.35)+
+  stat_smooth(method = "lm", col = "orange", alpha = 0.35)+
   xlab("")+
   ylab("Loudness category")+
   ggtitle("500Hz Left") +
@@ -38,7 +38,7 @@ plot5L <- ggplot(dat5L, aes(x = dB, y = loudness)) +
 
 plot5R <- ggplot(dat5R, aes(x = dB, y = loudness)) + 
   geom_point(shape = 1, size = 3) +
-  stat_smooth(method = "lm", col = "red", alpha = 0.35)+
+  stat_smooth(method = "lm", col = "orange", alpha = 0.35)+
   xlab("Level presented (dB HL)")+
   ylab("Loudness category")+
   ggtitle("500Hz Right") +
@@ -46,7 +46,7 @@ plot5R <- ggplot(dat5R, aes(x = dB, y = loudness)) +
 
 plot4L <- ggplot(dat4L, aes(x = dB, y = loudness)) + 
   geom_point(shape = 1, size = 3) +
-  stat_smooth(method = "lm", col = "red", alpha = 0.35)+
+  stat_smooth(method = "lm", col = "green", alpha = 0.35)+
   xlab("")+
   ylab("")+
   ggtitle("4000Hz Left") +
@@ -54,7 +54,7 @@ plot4L <- ggplot(dat4L, aes(x = dB, y = loudness)) +
 
 plot4R <- ggplot(dat4R, aes(x = dB, y = loudness)) + 
   geom_point(shape = 1, size = 3) +
-  stat_smooth(method = "lm", col = "red", alpha = 0.35)+
+  stat_smooth(method = "lm", col = "green", alpha = 0.35)+
   xlab("Level presented (dB HL)")+
   ylab("")+
   ggtitle("4000Hz Right") +
@@ -83,34 +83,34 @@ dat4R_cat <- dat4R
 dat4R_cat$loudness <- as.factor(dat4R_cat$loudness)
 
 #Create logistic regression models from dataframes with loudness as categorical
-glm_mod5L <- glm(loudness ~ dB, data = dat5L_cat, family = "binomial")
-glm_mod5R <- glm(loudness ~ dB, data = dat5R_cat, family = "binomial")
+ord_mod5L <- polr(loudness ~ dB, data = dat5L_cat, Hess = TRUE)
+ord_mod5R <- polr(loudness ~ dB, data = dat5R_cat, Hess = TRUE)
 
-glm_mod4L <- glm(loudness ~ dB, data = dat4L_cat, family = "binomial")
-glm_mod4R <- glm(loudness ~ dB, data = dat4R_cat, family = "binomial")
+ord_mod4L <- polr(loudness ~ dB, data = dat4L_cat, Hess = TRUE)
+ord_mod4R <- polr(loudness ~ dB, data = dat4R_cat, Hess = TRUE)
 
 #Print summary of logistic models
-summary(glm_mod5L)
-summary(glm_mod5R)
-summary(glm_mod4L)
-summary(glm_mod4R)
+summary(ord_mod5L)
+summary(ord_mod5R)
+summary(ord_mod4L)
+summary(ord_mod4R)
 
-#Calculate Odds Ratio and its 95% confidence interval, gather p from model
-OR5L <- unname(exp(coef(glm_mod5L)["dB"]))
-conf5L <- unname(exp(confint(glm_mod5L))["dB",])
-p5L <- summary(glm_mod5L)$coefficients[2,4]
+#Calculate Odds Ratio and its 95% confidence interval and p
+OR5L <- unname(exp(coef(ord_mod5L)["dB"]))
+conf5L <- unname(exp(confint(ord_mod5L)))
+p5L <- pnorm(abs(coef(summary(ord_mod5L))["dB","t value"]), lower.tail = FALSE) * 2
 
-OR5R <- unname(exp(coef(glm_mod5R)["dB"]))
-conf5R <- unname(exp(confint(glm_mod5R))["dB",])
-p5R <- summary(glm_mod5R)$coefficients[2,4]
+OR5R <- unname(exp(coef(ord_mod5R)["dB"]))
+conf5R <- unname(exp(confint(ord_mod5R)))
+p5R <- pnorm(abs(coef(summary(ord_mod5R))["dB","t value"]), lower.tail = FALSE) * 2
 
-OR4L <- unname(exp(coef(glm_mod4L)["dB"]))
-conf4L <- unname(exp(confint(glm_mod4L))["dB",])
-p4L <- summary(glm_mod4L)$coefficients[2,4]
+OR4L <- unname(exp(coef(ord_mod4L)["dB"]))
+conf4L <- unname(exp(confint(ord_mod4L)))
+p4L <- pnorm(abs(coef(summary(ord_mod4L))["dB","t value"]), lower.tail = FALSE) * 2
 
-OR4R <- unname(exp(coef(glm_mod4R)["dB"]))
-conf4R <- unname(exp(confint(glm_mod4R))["dB",])
-p4R <- summary(glm_mod4R)$coefficients[2,4]
+OR4R <- unname(exp(coef(ord_mod4R)["dB"]))
+conf4R <- unname(exp(confint(ord_mod4R)))
+p4R <- pnorm(abs(coef(summary(ord_mod4R))["dB","t value"]), lower.tail = FALSE) * 2
 
 #Order OR, CI and p in matrix of results
 results <- matrix(nrow = 4, ncol = 4)
@@ -120,5 +120,5 @@ results[2,1:4] <- round(c(OR5R, conf5R, p5R), 3)
 results[3,1:4] <- round(c(OR4L, conf4L, p4L), 3)
 results[4,1:4] <- round(c(OR4R, conf4R, p4R), 3)
 
-#Name rows and columns
+#Name rows and columns in result table
 dimnames(results) = list(c("5L", "5R", "4L", "4R"), c("OR", "CI 2.5", "CI 97.5", "p"))
